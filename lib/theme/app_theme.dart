@@ -39,6 +39,7 @@ class AppTheme {
           titleTextStyle: TextStyle(color: kPrimaryColor)),
       colorScheme: ColorScheme.fromSeed(seedColor: kPrimaryColor,
       primary: kPrimaryColor,
+          secondary: kSecondaryColor,
           onPrimary: Colors.white, // header text color
           error: Colors.red,));
 
@@ -75,6 +76,8 @@ class AppTheme {
         titleTextStyle: TextStyle(color: kPrimaryColor)),
     colorScheme: ColorScheme.fromSeed(
       seedColor: kPrimaryColor,
+      primary: kPrimaryColor,
+      secondary: kSecondaryColor,
       brightness: Brightness.dark,
     ),
   );
