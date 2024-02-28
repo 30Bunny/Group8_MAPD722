@@ -9,7 +9,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget{
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: Theme.of(context).colorScheme.secondary.withOpacity(0.5),
-      title: title == null ? null : Text(title ?? "", style: Theme.of(context).textTheme.titleLarge?.copyWith( color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w400)),
+      title: title == null ? null : Text(title ?? "", style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w400)),
       centerTitle: true,
     );
   }
