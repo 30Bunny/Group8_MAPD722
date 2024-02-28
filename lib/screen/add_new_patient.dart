@@ -10,7 +10,8 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class AddNewPatient extends StatefulWidget {
-  const AddNewPatient({super.key});
+  final bool isEdit;
+  const AddNewPatient({super.key, this.isEdit = false});
 
   @override
   State<AddNewPatient> createState() => _AddNewPatientState();
@@ -87,7 +88,7 @@ class _AddNewPatientState extends State<AddNewPatient> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: const CommonAppBar(title: 'Add Patient'),
+      appBar: CommonAppBar(title: widget.isEdit ? 'Update patient' : 'Add Patient'),
       body: ChangeNotifierProvider.value(
         value: _provider,
         builder: (context, child) {
@@ -310,7 +311,7 @@ class _AddNewPatientState extends State<AddNewPatient> {
               const SizedBox(height: 40),
 
               CustomElevatedButton(
-                buttonText: 'Add Patient',
+                buttonText: widget.isEdit ? 'Update Patient' : 'Add Patient',
                 onTap: () => _addPatient(),
               ),
             ],

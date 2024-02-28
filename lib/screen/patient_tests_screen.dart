@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:group8_mapd722/constant.dart';
 import 'package:group8_mapd722/screen/add_test_screen.dart';
+import 'package:group8_mapd722/util/dialog_util.dart';
 import 'package:group8_mapd722/widget/common_appbar.dart';
-import 'package:group8_mapd722/widget/patient_card.dart';
+import 'package:group8_mapd722/widget/test_card.dart';
 
 class PatientTestScreen extends StatefulWidget {
   const PatientTestScreen({super.key});
@@ -15,11 +16,12 @@ class _PatientTestScreenState extends State<PatientTestScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CommonAppBar(
+      appBar: CommonAppBar(
         title: 'Patient Tests',
         showButton: true,
         buttonText: 'Delete All',
         buttonTextColor: Colors.red,
+        onButtonTap: () => _showDeleteAllAlert(),
       ),
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: kPrimaryColor,
@@ -37,17 +39,41 @@ class _PatientTestScreenState extends State<PatientTestScreen> {
       scrollDirection: Axis.vertical,
       itemCount: 10,
       padding: const EdgeInsets.all(16),
-      physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (ctx, index) {
-        return const PatientCard();
+        return TestCard(
+          onDelete: () => _showDeleteAlert(index),
+          onUpdate: () => _navigateToEditTest(),
+        );
       },
       separatorBuilder: (context, index) {
-        return const SizedBox(height: 12);
+        return const SizedBox(height: 16);
       },
     );
   }
 
   _navigateToAddTest(){
     Navigator.push(context, MaterialPageRoute(builder: (context) => const  AddTestScreen()));
+  }
+
+  _navigateToEditTest(){
+    Navigator.push(context, MaterialPageRoute(builder: (context) => const  AddTestScreen(isEdit: true,)));
+  }
+
+  _showDeleteAllAlert(){
+    DialogUtil.getInstance()?.showAlertDialog(context, 'Are you sure you want to delete all records?',title: 'Delete All', onButtonTap: () => _onDeleteAll());
+  }
+
+  _onDeleteAll(){
+    Navigator.pop(context);
+    //Todo
+  }
+
+  _showDeleteAlert(int index){
+    DialogUtil.getInstance()?.showAlertDialog(context, 'Are you sure you want to delete records?',title: 'Delete', onButtonTap: () => _onDelete(index));
+  }
+
+  _onDelete(int index){
+    Navigator.pop(context);
+    //Todo
   }
 }

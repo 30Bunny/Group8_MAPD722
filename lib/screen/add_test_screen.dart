@@ -10,7 +10,8 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class AddTestScreen extends StatefulWidget {
-  const AddTestScreen({super.key});
+  final bool isEdit;
+  const AddTestScreen({super.key, this.isEdit = false});
 
   @override
   State<AddTestScreen> createState() => _AddTestScreenState();
@@ -87,7 +88,7 @@ class _AddTestScreenState extends State<AddTestScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: const CommonAppBar(title: 'Add Patient'),
+      appBar: CommonAppBar(title: widget.isEdit ? 'Update Test' : 'Add Test'),
       body: ChangeNotifierProvider.value(
         value: _provider,
         builder: (context, child) {
@@ -155,6 +156,7 @@ class _AddTestScreenState extends State<AddTestScreen> {
                   Expanded(child: TextFieldContainer(
                     controller: _departmentController,
                     labelText: 'Systolic',
+                    hint: 'X/Y mmHg',
                     onSaved: (value) {
                       //name = value;
                     },
@@ -170,6 +172,7 @@ class _AddTestScreenState extends State<AddTestScreen> {
                   Expanded(child: TextFieldContainer(
                     controller: _departmentController,
                     labelText: 'Diastolic',
+                    hint: 'X/Y mmHg',
                     onSaved: (value) {
                       //name = value;
                     },
@@ -189,6 +192,7 @@ class _AddTestScreenState extends State<AddTestScreen> {
               TextFieldContainer(
                 controller: _departmentController,
                 labelText: 'Respiratory Rate',
+                hint: 'X/min',
                 onSaved: (value) {
                   //name = value;
                 },
@@ -206,6 +210,7 @@ class _AddTestScreenState extends State<AddTestScreen> {
               TextFieldContainer(
                 controller: _doctorController,
                 labelText: 'Blood Oxygen Level',
+                hint: 'X%',
                 onSaved: (value) {
                   //name = value;
                 },
@@ -222,6 +227,7 @@ class _AddTestScreenState extends State<AddTestScreen> {
               TextFieldContainer(
                 controller: _departmentController,
                 labelText: 'Heartbeat Rate',
+                hint: 'X/min',
                 onSaved: (value) {
                   //name = value;
                 },
@@ -238,7 +244,7 @@ class _AddTestScreenState extends State<AddTestScreen> {
               const SizedBox(height: 40),
 
               CustomElevatedButton(
-                buttonText: 'Add Test',
+                buttonText: widget.isEdit ? 'Update Test' : 'Add Test',
                 onTap: () => _addTest(),
               ),
             ],

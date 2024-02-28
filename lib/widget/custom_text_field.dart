@@ -11,6 +11,7 @@ class CustomTextField extends StatelessWidget {
   final bool readOnly;
   final Function()? onTap;
   final int maxLines;
+  final String? hint;
 
   const CustomTextField(
       {super.key,
@@ -23,7 +24,8 @@ class CustomTextField extends StatelessWidget {
       this.onTap,
       this.suffixIconData,
       this.suffixIconColor,
-      this.maxLines = 1});
+      this.maxLines = 1,
+      this.hint});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +33,7 @@ class CustomTextField extends StatelessWidget {
       controller: controller,
       style: Theme.of(context).textTheme.bodyLarge?.copyWith(height: 1.0),
       decoration: InputDecoration(
-          hintText: labelText,
+          hintText: hint ?? labelText,
           hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.0, color: Colors.grey),
           errorStyle: const TextStyle(color: Colors.redAccent),
           border: OutlineInputBorder(

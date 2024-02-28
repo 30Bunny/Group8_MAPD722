@@ -12,6 +12,7 @@ class TextFieldContainer extends StatelessWidget {
   final bool readOnly;
   final Function()? onTap;
   final int maxLines;
+  final String? hint;
 
   const TextFieldContainer(
       {super.key,
@@ -24,7 +25,8 @@ class TextFieldContainer extends StatelessWidget {
         this.onTap,
         this.suffixIconData,
         this.suffixIconColor,
-      this.maxLines = 1});
+      this.maxLines = 1,
+      this.hint});
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +47,7 @@ class TextFieldContainer extends StatelessWidget {
           suffixIconColor: suffixIconColor,
           suffixIconData: suffixIconData,
           maxLines: maxLines,
+          hint: hint,
         )
       ],
     );
