@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:group8_mapd722/constant.dart';
+import 'package:group8_mapd722/screen/patient_tests_screen.dart';
 import 'package:group8_mapd722/widget/common_appbar.dart';
 import 'package:group8_mapd722/widget/patient_card.dart';
 
@@ -17,14 +18,19 @@ class _ViewAllPatientsState extends State<ViewAllPatients> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kOffWhiteColor,
-      appBar: const CommonAppBar(title: 'Patients'),
+        backgroundColor: kOffWhiteColor,
+        appBar: const CommonAppBar(
+          title: 'Patients',
+          showButton: true,
+          buttonText: 'Delete All',
+          buttonTextColor: Colors.red,
+        ),
         body: SingleChildScrollView(
           child: Column(
             children: [
-
               Padding(
-                padding: const EdgeInsets.only(top: 12, bottom: 4, left: 12, right: 12),
+                padding: const EdgeInsets.only(
+                    top: 12, bottom: 4, left: 12, right: 12),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -32,7 +38,10 @@ class _ViewAllPatientsState extends State<ViewAllPatients> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8),
                         child: TextField(
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.0),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(height: 1.0),
                           controller: _controller,
                           onChanged: (value) {
                             setState(() {
@@ -42,13 +51,11 @@ class _ViewAllPatientsState extends State<ViewAllPatients> {
                           decoration: InputDecoration(
                             hintText: 'Search...',
                             focusedBorder: OutlineInputBorder(
-                              borderRadius:
-                              BorderRadius.circular(50),
+                              borderRadius: BorderRadius.circular(50),
                               borderSide: const BorderSide(color: kGreyColor),
                             ),
                             enabledBorder: OutlineInputBorder(
-                              borderRadius:
-                              BorderRadius.circular(50),
+                              borderRadius: BorderRadius.circular(50),
                               borderSide: const BorderSide(color: kGreyColor),
                             ),
                             prefixIcon: const Icon(Icons.search),
@@ -56,8 +63,6 @@ class _ViewAllPatientsState extends State<ViewAllPatients> {
                         ),
                       ),
                     ),
-
-
                   ],
                 ),
               ),
@@ -70,7 +75,11 @@ class _ViewAllPatientsState extends State<ViewAllPatients> {
                 padding: const EdgeInsets.all(16),
                 physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: (ctx, index) {
-                  return const PatientCard();
+                  return PatientCard(
+                    onViewTests: () => _navigateToViewTests(),
+                    onDelete: (){},
+                    onUpdate: (){},
+                  );
                 },
                 separatorBuilder: (context, index) {
                   return const SizedBox(height: 12);
@@ -78,7 +87,10 @@ class _ViewAllPatientsState extends State<ViewAllPatients> {
               )
             ],
           ),
-        )
-    );
+        ));
+  }
+
+  _navigateToViewTests(){
+    Navigator.push(context, MaterialPageRoute(builder: (context) => const  PatientTestScreen()));
   }
 }

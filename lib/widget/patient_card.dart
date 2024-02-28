@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:group8_mapd722/constant.dart';
 
 class PatientCard extends StatelessWidget {
-  const PatientCard({super.key});
+  final Function()? onDelete;
+  final Function()? onUpdate;
+  final Function()? onViewTests;
+  const PatientCard({super.key, this.onDelete, this.onUpdate, this.onViewTests});
 
   @override
   Widget build(BuildContext context) {
@@ -14,11 +17,6 @@ class PatientCard extends StatelessWidget {
           boxShadow: [
             BoxShadow(
               offset: const Offset(0, 3),
-              //spreadRadius: .3,
-              /*color: Colors.black.withOpacity(
-                              .2,
-                            ),*/
-              //blurRadius: 2.0,
               color: Colors.grey[300]!,
               blurRadius: 5,
               spreadRadius: 5,
@@ -87,8 +85,9 @@ class PatientCard extends StatelessWidget {
                 ),
                 Wrap(
                   children: [
-                    IconButton.filledTonal(onPressed: (){}, icon: const Icon(Icons.edit),iconSize: 16, visualDensity: VisualDensity.compact,),
-                    IconButton.filledTonal(onPressed: (){}, icon: const Icon(Icons.delete_rounded), color: Colors.red,iconSize: 16, visualDensity: VisualDensity.compact,)
+                    IconButton.filledTonal(onPressed: onViewTests, icon: const Icon(Icons.remove_red_eye), color: Colors.blueGrey, iconSize: 16, visualDensity: VisualDensity.compact,),
+                    IconButton.filledTonal(onPressed: onUpdate, icon: const Icon(Icons.edit),iconSize: 16, visualDensity: VisualDensity.compact,),
+                    IconButton.filledTonal(onPressed: onDelete, icon: const Icon(Icons.delete_rounded), color: Colors.red,iconSize: 16, visualDensity: VisualDensity.compact,)
                   ],
                 )
               ],

@@ -36,7 +36,8 @@ class AppTheme {
       appBarTheme: const AppBarTheme(
           color: Colors.white,
           iconTheme: IconThemeData(color: Colors.black),
-          titleTextStyle: TextStyle(color: Colors.black)),
+          titleTextStyle: TextStyle(color: Colors.black),
+      actionsIconTheme: IconThemeData(color: Colors.black)),
       colorScheme: ColorScheme.fromSeed(seedColor: kPrimaryColor,
       primary: kPrimaryColor,
           secondary: kSecondaryColor,

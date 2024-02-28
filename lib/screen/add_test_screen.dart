@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:group8_mapd722/constant.dart';
-import 'package:group8_mapd722/provider/add_patient_provider.dart';
+import 'package:group8_mapd722/provider/add_test_provider.dart';
 import 'package:group8_mapd722/util/util.dart';
 import 'package:group8_mapd722/widget/common_appbar.dart';
 import 'package:group8_mapd722/widget/custom_elevated_button.dart';
@@ -9,15 +9,15 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class AddNewPatient extends StatefulWidget {
-  const AddNewPatient({super.key});
+class AddTestScreen extends StatefulWidget {
+  const AddTestScreen({super.key});
 
   @override
-  State<AddNewPatient> createState() => _AddNewPatientState();
+  State<AddTestScreen> createState() => _AddTestScreenState();
 }
 
-class _AddNewPatientState extends State<AddNewPatient> {
-  final AddPatientProvider _provider = AddPatientProvider();
+class _AddTestScreenState extends State<AddTestScreen> {
+  final AddTestProvider _provider = AddTestProvider();
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _fNameController = TextEditingController();
@@ -91,10 +91,10 @@ class _AddNewPatientState extends State<AddNewPatient> {
       body: ChangeNotifierProvider.value(
         value: _provider,
         builder: (context, child) {
-          return Consumer<AddPatientProvider>(
+          return Consumer<AddTestProvider>(
               builder: (context, provider, child) {
-            return _getBody;
-          });
+                return _getBody;
+              });
         },
       ),
     );
@@ -110,21 +110,11 @@ class _AddNewPatientState extends State<AddNewPatient> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.max,
             children: [
-              Text(
-                'Personal Information',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge
-                    ?.copyWith(fontWeight: FontWeight.w500),
-              ),
-              const SizedBox(
-                height: 12,
-              ),
 
               // First Name TextField
               TextFieldContainer(
                 controller: _fNameController,
-                labelText: 'First Name',
+                labelText: 'Nurse Name',
                 onSaved: (value) {
                   //name = value;
                 },
@@ -138,95 +128,10 @@ class _AddNewPatientState extends State<AddNewPatient> {
               ),
               const SizedBox(height: 20),
 
-              // Last Name TextField
-              TextFieldContainer(
-                controller: _lNameController,
-                labelText: 'Last Name',
-                onSaved: (value) {
-                  //name = value;
-                },
-                validation: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter Last Name';
-                  } else {
-                    return null;
-                  }
-                },
-              ),
-              const SizedBox(height: 20),
-
-              // Email TextField
-              TextFieldContainer(
-                controller: _emailController,
-                labelText: 'Email',
-                onSaved: (value) {
-                  //name = value;
-                },
-                validation: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter Email';
-                  } else if (!Util.isValidEmail(value)) {
-                    return 'Please enter valid Email';
-                  } else {
-                    return null;
-                  }
-                },
-              ),
-              const SizedBox(height: 20),
-
-              // Mobile TextField
-              TextFieldContainer(
-                controller: _contactController,
-                labelText: 'Mobile',
-                onSaved: (value) {
-                  //name = value;
-                },
-                validation: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter Mobile Number';
-                  } else if (!Util.isValidMobile(value)) {
-                    return 'Please enter valid Number';
-                  } else {
-                    return null;
-                  }
-                },
-              ),
-              const SizedBox(height: 20),
-
-              Padding(
-                padding: const EdgeInsets.only(bottom: 4),
-                child: Text(
-                  'Gender',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium
-                      ?.copyWith(color: Colors.grey[700]),
-                ),
-              ),
-              Wrap(
-                spacing: 5.0,
-                children: List<Widget>.generate(
-                  kGenderList.length,
-                  (int index) {
-                    return ChoiceChip(
-                      label: Text(kGenderList[index]),
-                      selected: _provider.genderValue == index,
-                      selectedColor: kPrimaryColor,
-                      backgroundColor: kSecondaryColor.withOpacity(0.5),
-                      side: const BorderSide(color: Colors.transparent),
-                      checkmarkColor: Colors.white,
-                      onSelected: (bool selected) =>
-                          _provider.changeGender(selected, index),
-                    );
-                  },
-                ).toList(),
-              ),
-              const SizedBox(height: 20),
-
               // DOB TextField
               TextFieldContainer(
                 controller: _dateController,
-                labelText: 'Date of birth',
+                labelText: 'Test Date',
                 suffixIconData: Icons.calendar_month_rounded,
                 readOnly: true,
                 onTap: () {
@@ -237,7 +142,7 @@ class _AddNewPatientState extends State<AddNewPatient> {
                 },
                 validation: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please select date of birth';
+                    return 'Please select test date';
                   } else {
                     return null;
                   }
@@ -245,45 +150,51 @@ class _AddNewPatientState extends State<AddNewPatient> {
               ),
               const SizedBox(height: 20),
 
-              // Address TextField
-              TextFieldContainer(
-                controller: _addressController,
-                labelText: 'Address',
-                maxLines: 3,
-                onSaved: (value) {
-                  //name = value;
-                },
-                validation: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter address';
-                  } else {
-                    return null;
-                  }
-                },
+              Row(
+                children: [
+                  Expanded(child: TextFieldContainer(
+                    controller: _departmentController,
+                    labelText: 'Systolic',
+                    onSaved: (value) {
+                      //name = value;
+                    },
+                    validation: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter systolic value';
+                      } else {
+                        return null;
+                      }
+                    },
+                  ),),
+                  const SizedBox(width: 12,),
+                  Expanded(child: TextFieldContainer(
+                    controller: _departmentController,
+                    labelText: 'Diastolic',
+                    onSaved: (value) {
+                      //name = value;
+                    },
+                    validation: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter diastolic value';
+                      } else {
+                        return null;
+                      }
+                    },
+                  ),)
+                ],
               ),
               const SizedBox(height: 20),
-
-              Text(
-                'Other Information',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge
-                    ?.copyWith(fontWeight: FontWeight.w500),
-              ),
-              const SizedBox(
-                height: 12,
-              ),
 
               // First Name TextField
               TextFieldContainer(
                 controller: _departmentController,
-                labelText: 'Department',
+                labelText: 'Respiratory Rate',
                 onSaved: (value) {
                   //name = value;
                 },
                 validation: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter Department';
+                    return 'Please enter Respiratory rate';
                   } else {
                     return null;
                   }
@@ -294,24 +205,41 @@ class _AddNewPatientState extends State<AddNewPatient> {
               // Last Name TextField
               TextFieldContainer(
                 controller: _doctorController,
-                labelText: 'Doctor',
+                labelText: 'Blood Oxygen Level',
                 onSaved: (value) {
                   //name = value;
                 },
                 validation: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter Doctor Name';
+                    return 'Please enter Blood oxygen Level';
+                  } else {
+                    return null;
+                  }
+                },
+              ),
+              const SizedBox(height: 20),
+
+              TextFieldContainer(
+                controller: _departmentController,
+                labelText: 'Heartbeat Rate',
+                onSaved: (value) {
+                  //name = value;
+                },
+                validation: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter Heartbeat rate';
                   } else {
                     return null;
                   }
                 },
               ),
 
+
               const SizedBox(height: 40),
 
               CustomElevatedButton(
-                buttonText: 'Add Patient',
-                onTap: () => _addPatient(),
+                buttonText: 'Add Test',
+                onTap: () => _addTest(),
               ),
             ],
           ),
@@ -320,7 +248,7 @@ class _AddNewPatientState extends State<AddNewPatient> {
     );
   }
 
-  _addPatient() async {
+  _addTest() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState?.save();
 
