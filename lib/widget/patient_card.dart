@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:group8_mapd722/constant.dart';
+import 'package:group8_mapd722/model/patient.dart';
 
 class PatientCard extends StatelessWidget {
+  final Patient patient;
   final Function()? onTap;
   final Function()? onDelete;
   final Function()? onUpdate;
   final Function()? onViewTests;
-  const PatientCard({super.key, this.onDelete, this.onUpdate, this.onViewTests, this.onTap});
+  const PatientCard({super.key, required this.patient, this.onDelete, this.onUpdate, this.onViewTests, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -38,18 +40,18 @@ class PatientCard extends StatelessWidget {
                     child: Wrap(
                       direction: Axis.vertical,
                       children: [
-                        Text("Sasuke Uchiha", style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),),
-                        Text("sasukeuchiha@gmail.com", style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[600], fontWeight: FontWeight.w400))
+                        Text("${patient.firstName} ${patient.lastName}", style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),),
+                        Text(patient.email ?? "", style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[600], fontWeight: FontWeight.w400))
                       ],
                     ),
                   ),
                   Container(
-                    decoration: const BoxDecoration(
-                        color: kPrimaryDarkColor,
-                        borderRadius: BorderRadius.all(Radius.circular(12))
+                    decoration: BoxDecoration(
+                        color: patient.status == kCategoryList[1] ? kAlphaGreenBackColor : kAlphaRedBackColor,
+                        borderRadius: const BorderRadius.all(Radius.circular(12))
                     ),
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                    child: Text('Normal', style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.white, fontSize: 11),),
+                    child: Text(patient.status ?? "", style: Theme.of(context).textTheme.bodySmall?.copyWith(color: patient.status == kCategoryList[1] ? kPrimaryDarkColor : kRedColor, fontSize: 11),),
                   )
                 ],
               ),
@@ -61,7 +63,7 @@ class PatientCard extends StatelessWidget {
                       direction: Axis.vertical,
                       children: [
                         Text("Department", style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey[600], fontWeight: FontWeight.w400, fontSize: 11),),
-                        Text("Pharmacy", style: Theme.of(context).textTheme.bodyLarge),
+                        Text(patient.department ?? "", style: Theme.of(context).textTheme.bodyLarge),
                       ],
                     ),
                   ),
@@ -69,7 +71,7 @@ class PatientCard extends StatelessWidget {
                     direction: Axis.vertical,
                     children: [
                       Text("Doctor", style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey[600], fontWeight: FontWeight.w400, fontSize: 9),),
-                      Text("Naruto Uzumaki", style: Theme.of(context).textTheme.bodyLarge),
+                      Text(patient.doctor ?? "", style: Theme.of(context).textTheme.bodyLarge),
                     ],
                   ))
                 ],
@@ -81,8 +83,8 @@ class PatientCard extends StatelessWidget {
                     child: Wrap(
                       direction: Axis.vertical,
                       children: [
-                        Text("Created By : Bansi", style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey[600], fontWeight: FontWeight.w400),),
-                        Text("Created On : 2024-02-27", style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey[600], fontWeight: FontWeight.w400)),
+                        Text("Created By : ${patient.createdBy}", style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey[600], fontWeight: FontWeight.w400),),
+                        Text("Created On : ${patient.createdOn}", style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey[600], fontWeight: FontWeight.w400)),
                       ],
                     ),
                   ),

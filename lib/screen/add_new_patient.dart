@@ -1,6 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:group8_mapd722/app_config.dart';
 import 'package:group8_mapd722/constant.dart';
+import 'package:group8_mapd722/network/network_repository.dart';
+import 'package:group8_mapd722/network/network_response.dart';
 import 'package:group8_mapd722/provider/add_patient_provider.dart';
+import 'package:group8_mapd722/util/dialog_util.dart';
 import 'package:group8_mapd722/util/util.dart';
 import 'package:group8_mapd722/widget/common_appbar.dart';
 import 'package:group8_mapd722/widget/custom_elevated_button.dart';
@@ -127,7 +134,7 @@ class _AddNewPatientState extends State<AddNewPatient> {
                 controller: _fNameController,
                 labelText: 'First Name',
                 onSaved: (value) {
-                  //name = value;
+                  _provider.patient.firstName = value;
                 },
                 validation: (value) {
                   if (value == null || value.isEmpty) {
@@ -144,7 +151,7 @@ class _AddNewPatientState extends State<AddNewPatient> {
                 controller: _lNameController,
                 labelText: 'Last Name',
                 onSaved: (value) {
-                  //name = value;
+                  _provider.patient.lastName = value;
                 },
                 validation: (value) {
                   if (value == null || value.isEmpty) {
@@ -161,7 +168,7 @@ class _AddNewPatientState extends State<AddNewPatient> {
                 controller: _emailController,
                 labelText: 'Email',
                 onSaved: (value) {
-                  //name = value;
+                  _provider.patient.email = value;
                 },
                 validation: (value) {
                   if (value == null || value.isEmpty) {
@@ -180,7 +187,7 @@ class _AddNewPatientState extends State<AddNewPatient> {
                 controller: _contactController,
                 labelText: 'Mobile',
                 onSaved: (value) {
-                  //name = value;
+                  _provider.patient.mobile = value;
                 },
                 validation: (value) {
                   if (value == null || value.isEmpty) {
@@ -234,7 +241,7 @@ class _AddNewPatientState extends State<AddNewPatient> {
                   _selectDate(context);
                 },
                 onSaved: (value) {
-                  //name = value;
+                  _provider.patient.dateOfBirth = value;
                 },
                 validation: (value) {
                   if (value == null || value.isEmpty) {
@@ -252,7 +259,7 @@ class _AddNewPatientState extends State<AddNewPatient> {
                 labelText: 'Address',
                 maxLines: 3,
                 onSaved: (value) {
-                  //name = value;
+                  _provider.patient.address = value;
                 },
                 validation: (value) {
                   if (value == null || value.isEmpty) {
@@ -280,7 +287,7 @@ class _AddNewPatientState extends State<AddNewPatient> {
                 controller: _departmentController,
                 labelText: 'Department',
                 onSaved: (value) {
-                  //name = value;
+                  _provider.patient.department = value;
                 },
                 validation: (value) {
                   if (value == null || value.isEmpty) {
@@ -297,7 +304,7 @@ class _AddNewPatientState extends State<AddNewPatient> {
                 controller: _doctorController,
                 labelText: 'Doctor',
                 onSaved: (value) {
-                  //name = value;
+                  _provider.patient.doctor = value;
                 },
                 validation: (value) {
                   if (value == null || value.isEmpty) {
@@ -325,6 +332,10 @@ class _AddNewPatientState extends State<AddNewPatient> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState?.save();
 
+      _provider.patient.gender = kGenderList[_provider.genderValue];
+      _provider.patient.status = kCategoryList[1];
+      _provider.patient.createdBy = 'Bansi';
+
       bool isOnline = await InternetConnectionChecker().hasConnection;
       if (!isOnline) {
         if (!context.mounted) return;
@@ -332,28 +343,23 @@ class _AddNewPatientState extends State<AddNewPatient> {
         return;
       }
 
-      /*Map<String, dynamic> body = {
-        "fullName" : _nameController.text,
-        "contactNumber" : _contactController.text,
-        "dateOfBirth" : _dateController.text
-      };
-      String jsonBody = json.encode(body);
+      String jsonBody = json.encode(_provider.patient.toJson());
 
       DialogUtil.getInstance()?.showLoaderDialog();
       NetworkResponse response = await NetworkRepository.post(
-          '${GetIt.instance<AppConfig>().baseUrl}$kProfileApi/${widget.customer?.id}', body: jsonBody);
+          '${GetIt.instance<AppConfig>().baseUrl}$kGetPatient', body: jsonBody);
       DialogUtil.getInstance()?.dismissLoaderDialog();
 
       if (response.success && response.response != null) {
         if (!context.mounted) return;
-        Util.showMsg(context, kProfileUpdateSuccessMsg);
+        Util.showMsg(context, kPatientAddedSuccessMsg);
 
-        Navigator.pop(context, true);
+        Navigator.pop(context);
       }else {
         if (!context.mounted) return;
-        Util.showMsg(context, 'Invalid username or password');
+        Util.showMsg(context, kSomethingWentWrongMsg);
         //Util.showMsg(context, response.errorMsg ?? kSomethingWentWrongMsg);
-      }*/
+      }
     }
   }
 }

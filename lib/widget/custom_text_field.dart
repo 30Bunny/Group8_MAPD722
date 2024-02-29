@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:group8_mapd722/constant.dart';
 
 class CustomTextField extends StatelessWidget {
   final String labelText;
@@ -35,7 +36,7 @@ class CustomTextField extends StatelessWidget {
       decoration: InputDecoration(
           hintText: hint ?? labelText,
           hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.0, color: Colors.grey),
-          errorStyle: const TextStyle(color: Colors.redAccent),
+          //errorStyle: const TextStyle(color: kRedColor),
           border: OutlineInputBorder(
             borderSide: BorderSide(color: Colors.grey[300]!),
             borderRadius: BorderRadius.circular(8.0),
