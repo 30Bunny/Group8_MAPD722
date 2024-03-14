@@ -3,6 +3,9 @@ import 'dart:ui';
 const kAppName = "WeCare";
 const kNoInternetMsg = 'No internet connection!!';
 const kPatientAddedSuccessMsg = 'Patient added successfully!!';
+const kPatientUpdatedSuccessMsg = 'Patient detail updated successfully!!';
+const kPatientTestAddedSuccessMsg = 'Test added successfully!!';
+const kPatientTestUpdatedSuccessMsg = 'Test updated successfully!!';
 const kSomethingWentWrongMsg = 'Something went wrong, please try again later.';
 const kGenderList = ['Male', 'Female'];
 const kCategoryList = ['All','Normal', 'Critical'];
@@ -26,3 +29,4 @@ const kCriticalIcon = 'assets/images/critical.png';
 
 // API Constant
 const kGetPatient = '/patients';
+const kGetPatientTests = '/tests';

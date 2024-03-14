@@ -1,3 +1,5 @@
+import 'package:group8_mapd722/model/test.dart';
+
 class Patient {
   String? sId;
   String? firstName;
@@ -14,7 +16,7 @@ class Patient {
   String? createdBy;
   String? modifiedOn;
   String? modifiedBy;
-  List<Tests>? tests;
+  List<Test>? tests;
   int? iV;
 
   Patient(
@@ -53,9 +55,9 @@ class Patient {
     modifiedOn = json['modified_on'];
     modifiedBy = json['modified_by'];
     if (json['tests'] != null) {
-      tests = <Tests>[];
+      tests = <Test>[];
       json['tests'].forEach((v) {
-        tests!.add(Tests.fromJson(v));
+        tests!.add(Test.fromJson(v));
       });
     }
     iV = json['__v'];
@@ -104,104 +106,6 @@ class Patient {
     if (tests != null) {
       data['tests'] = tests!.map((v) => v.toJson()).toList();
     }
-    return data;
-  }
-}
-
-class Tests {
-  Readings? readings;
-  String? testDate;
-  String? testName;
-  String? nurseName;
-  String? type;
-  String? testStatus;
-  String? category;
-  String? createdOn;
-  String? createdBy;
-  String? modifiedOn;
-  String? modifiedBy;
-  String? sId;
-
-  Tests(
-      {this.readings,
-        this.testDate,
-        this.testName,
-        this.nurseName,
-        this.type,
-        this.testStatus,
-        this.category,
-        this.createdOn,
-        this.createdBy,
-        this.modifiedOn,
-        this.modifiedBy,
-        this.sId});
-
-  Tests.fromJson(Map<String, dynamic> json) {
-    readings = json['readings'] != null
-        ? Readings.fromJson(json['readings'])
-        : null;
-    testDate = json['testDate'];
-    testName = json['testName'];
-    nurseName = json['nurseName'];
-    type = json['type'];
-    testStatus = json['testStatus'];
-    category = json['category'];
-    createdOn = json['created_on'];
-    createdBy = json['created_by'];
-    modifiedOn = json['modified_on'];
-    modifiedBy = json['modified_by'];
-    sId = json['_id'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    if (readings != null) {
-      data['readings'] = readings!.toJson();
-    }
-    data['testDate'] = testDate;
-    data['testName'] = testName;
-    data['nurseName'] = nurseName;
-    data['type'] = type;
-    data['testStatus'] = testStatus;
-    data['category'] = category;
-    data['created_on'] = createdOn;
-    data['created_by'] = createdBy;
-    data['modified_on'] = modifiedOn;
-    data['modified_by'] = modifiedBy;
-    data['_id'] = sId;
-    return data;
-  }
-}
-
-class Readings {
-  int? diastolicBP;
-  int? systolicBP;
-  int? respiratoryRate;
-  int? bloodOxygenLevel;
-  int? heartRate;
-
-  Readings(
-      {this.diastolicBP,
-        this.systolicBP,
-        this.respiratoryRate,
-        this.bloodOxygenLevel,
-        this.heartRate});
-
-  Readings.fromJson(Map<String, dynamic> json) {
-    diastolicBP = json['diastolicBP'];
-    systolicBP = json['systolicBP'];
-    respiratoryRate = json['respiratoryRate'];
-    bloodOxygenLevel = json['bloodOxygenLevel'];
-    heartRate = json['heartRate'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['diastolicBP'] = diastolicBP;
-    data['systolicBP'] = systolicBP;
-    data['respiratoryRate'] = respiratoryRate;
-    data['bloodOxygenLevel'] = bloodOxygenLevel;
-    data['heartRate'] = heartRate;
     return data;
   }
 }

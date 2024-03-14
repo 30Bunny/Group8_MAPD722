@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:group8_mapd722/app_config.dart';
 import 'package:group8_mapd722/constant.dart';
+import 'package:group8_mapd722/model/patient.dart';
 import 'package:group8_mapd722/network/network_repository.dart';
 import 'package:group8_mapd722/network/network_response.dart';
 import 'package:group8_mapd722/provider/add_patient_provider.dart';
@@ -18,7 +19,8 @@ import 'package:provider/provider.dart';
 
 class AddNewPatient extends StatefulWidget {
   final bool isEdit;
-  const AddNewPatient({super.key, this.isEdit = false});
+  final Patient? patient;
+  const AddNewPatient({super.key, this.isEdit = false, this.patient});
 
   @override
   State<AddNewPatient> createState() => _AddNewPatientState();
@@ -72,10 +74,25 @@ class _AddNewPatientState extends State<AddNewPatient> {
     }
   }
 
+  _setData(){
+    if(widget.isEdit){
+      _fNameController.text = widget.patient?.firstName ?? '';
+      _lNameController.text = widget.patient?.lastName ?? '';
+      _emailController.text = widget.patient?.email ?? '';
+      _contactController.text = widget.patient?.mobile ?? '';
+      _dateController.text = widget.patient?.dateOfBirth ?? '';
+      _addressController.text = widget.patient?.address ?? '';
+      _departmentController.text = widget.patient?.department ?? '';
+      _doctorController.text = widget.patient?.doctor ?? '';
+
+      _provider.changeGender(true, widget.patient?.gender?.toLowerCase() == kGenderList[0] ? 0 : 1);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    // _setData();
+    _setData();
   }
 
   @override
@@ -319,7 +336,7 @@ class _AddNewPatientState extends State<AddNewPatient> {
 
               CustomElevatedButton(
                 buttonText: widget.isEdit ? 'Update Patient' : 'Add Patient',
-                onTap: () => _addPatient(),
+                onTap: () => widget.isEdit ? _updatePatient() : _addPatient(),
               ),
             ],
           ),
@@ -353,6 +370,40 @@ class _AddNewPatientState extends State<AddNewPatient> {
       if (response.success && response.response != null) {
         if (!context.mounted) return;
         Util.showMsg(context, kPatientAddedSuccessMsg);
+
+        Navigator.pop(context);
+      }else {
+        if (!context.mounted) return;
+        Util.showMsg(context, kSomethingWentWrongMsg);
+        //Util.showMsg(context, response.errorMsg ?? kSomethingWentWrongMsg);
+      }
+    }
+  }
+
+  _updatePatient() async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState?.save();
+
+      _provider.patient.gender = kGenderList[_provider.genderValue];
+      _provider.patient.modifiedBy = 'Bansi';
+
+      bool isOnline = await InternetConnectionChecker().hasConnection;
+      if (!isOnline) {
+        if (!context.mounted) return;
+        Util.showMsg(context, kNoInternetMsg);
+        return;
+      }
+
+      String jsonBody = json.encode(_provider.patient.toJson());
+
+      DialogUtil.getInstance()?.showLoaderDialog();
+      NetworkResponse response = await NetworkRepository.put(
+          '${GetIt.instance<AppConfig>().baseUrl}$kGetPatient/${widget.patient?.sId}', body: jsonBody);
+      DialogUtil.getInstance()?.dismissLoaderDialog();
+
+      if (response.success && response.response != null) {
+        if (!context.mounted) return;
+        Util.showMsg(context, kPatientUpdatedSuccessMsg);
 
         Navigator.pop(context);
       }else {

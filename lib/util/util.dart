@@ -33,7 +33,7 @@ class Util {
 
   static bool isValidMobile(String? value) {
     if (value == null || value.isEmpty) return false;
-    RegExp exp = RegExp(r"^[6789]{1}\d{9}");
+    RegExp exp = RegExp(r"^[0-9]{3}[0-9]{3}[0-9]{4}$");
     return exp.hasMatch(value);
   }
 

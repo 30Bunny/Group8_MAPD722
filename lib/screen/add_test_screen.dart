@@ -1,6 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:group8_mapd722/app_config.dart';
 import 'package:group8_mapd722/constant.dart';
+import 'package:group8_mapd722/model/test.dart';
+import 'package:group8_mapd722/network/network_repository.dart';
+import 'package:group8_mapd722/network/network_response.dart';
 import 'package:group8_mapd722/provider/add_test_provider.dart';
+import 'package:group8_mapd722/util/dialog_util.dart';
 import 'package:group8_mapd722/util/util.dart';
 import 'package:group8_mapd722/widget/common_appbar.dart';
 import 'package:group8_mapd722/widget/custom_elevated_button.dart';
@@ -11,7 +19,11 @@ import 'package:provider/provider.dart';
 
 class AddTestScreen extends StatefulWidget {
   final bool isEdit;
-  const AddTestScreen({super.key, this.isEdit = false});
+  final String? patientID;
+  final Test? test;
+
+  const AddTestScreen(
+      {super.key, this.isEdit = false, this.patientID, this.test});
 
   @override
   State<AddTestScreen> createState() => _AddTestScreenState();
@@ -21,14 +33,13 @@ class _AddTestScreenState extends State<AddTestScreen> {
   final AddTestProvider _provider = AddTestProvider();
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _fNameController = TextEditingController();
-  final TextEditingController _lNameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _contactController = TextEditingController();
-  final TextEditingController _dateController = TextEditingController();
-  final TextEditingController _addressController = TextEditingController();
-  final TextEditingController _departmentController = TextEditingController();
-  final TextEditingController _doctorController = TextEditingController();
+  final _nurseNameController = TextEditingController();
+  final _testDateController = TextEditingController();
+  final _systolicController = TextEditingController();
+  final _diastolicController = TextEditingController();
+  final _rasRateController = TextEditingController();
+  final _bloodOxyLevelController = TextEditingController();
+  final _heartRateController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
 
   Future<void> _selectDate(BuildContext context) async {
@@ -58,30 +69,48 @@ class _AddTestScreenState extends State<AddTestScreen> {
     if (picked != null && picked != _selectedDate) {
       setState(() {
         _selectedDate = picked;
-        _dateController.text =
+        _testDateController.text =
             Util.getFormattedDate(picked, DateFormat('dd-MM-yyyy')) ??
                 ""; // you can format the date as you want
       });
     }
   }
 
+  _setData() {
+    if (widget.isEdit) {
+      _nurseNameController.text = widget.test?.nurseName ?? '';
+      _testDateController.text = widget.test?.testDate ?? '';
+      _systolicController.text =
+          widget.test?.readings?.systolicBP?.toString() ?? '';
+      _diastolicController.text =
+          widget.test?.readings?.diastolicBP?.toString() ?? '';
+      _rasRateController.text =
+          widget.test?.readings?.respiratoryRate?.toString() ?? '';
+      _bloodOxyLevelController.text =
+          widget.test?.readings?.bloodOxygenLevel?.toString() ?? '';
+      _heartRateController.text =
+          widget.test?.readings?.heartRate?.toString() ?? '';
+    }
+
+    _provider.test.readings = Readings();
+  }
+
   @override
   void initState() {
     super.initState();
-    // _setData();
+    _setData();
   }
 
   @override
   void dispose() {
     super.dispose();
-    _fNameController.dispose();
-    _lNameController.dispose();
-    _emailController.dispose();
-    _contactController.dispose();
-    _dateController.dispose();
-    _addressController.dispose();
-    _departmentController.dispose();
-    _doctorController.dispose();
+    _nurseNameController.dispose();
+    _testDateController.dispose();
+    _systolicController.dispose();
+    _diastolicController.dispose();
+    _rasRateController.dispose();
+    _bloodOxyLevelController.dispose();
+    _heartRateController.dispose();
   }
 
   @override
@@ -92,10 +121,9 @@ class _AddTestScreenState extends State<AddTestScreen> {
       body: ChangeNotifierProvider.value(
         value: _provider,
         builder: (context, child) {
-          return Consumer<AddTestProvider>(
-              builder: (context, provider, child) {
-                return _getBody;
-              });
+          return Consumer<AddTestProvider>(builder: (context, provider, child) {
+            return _getBody;
+          });
         },
       ),
     );
@@ -111,13 +139,12 @@ class _AddTestScreenState extends State<AddTestScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.max,
             children: [
-
               // First Name TextField
               TextFieldContainer(
-                controller: _fNameController,
+                controller: _nurseNameController,
                 labelText: 'Nurse Name',
                 onSaved: (value) {
-                  //name = value;
+                  _provider.test.nurseName = value;
                 },
                 validation: (value) {
                   if (value == null || value.isEmpty) {
@@ -131,7 +158,7 @@ class _AddTestScreenState extends State<AddTestScreen> {
 
               // DOB TextField
               TextFieldContainer(
-                controller: _dateController,
+                controller: _testDateController,
                 labelText: 'Test Date',
                 suffixIconData: Icons.calendar_month_rounded,
                 readOnly: true,
@@ -139,7 +166,7 @@ class _AddTestScreenState extends State<AddTestScreen> {
                   _selectDate(context);
                 },
                 onSaved: (value) {
-                  //name = value;
+                  _provider.test.testDate = value;
                 },
                 validation: (value) {
                   if (value == null || value.isEmpty) {
@@ -153,48 +180,60 @@ class _AddTestScreenState extends State<AddTestScreen> {
 
               Row(
                 children: [
-                  Expanded(child: TextFieldContainer(
-                    controller: _departmentController,
-                    labelText: 'Systolic',
-                    hint: 'X/Y mmHg',
-                    onSaved: (value) {
-                      //name = value;
-                    },
-                    validation: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter systolic value';
-                      } else {
-                        return null;
-                      }
-                    },
-                  ),),
-                  const SizedBox(width: 12,),
-                  Expanded(child: TextFieldContainer(
-                    controller: _departmentController,
-                    labelText: 'Diastolic',
-                    hint: 'X/Y mmHg',
-                    onSaved: (value) {
-                      //name = value;
-                    },
-                    validation: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter diastolic value';
-                      } else {
-                        return null;
-                      }
-                    },
-                  ),)
+                  Expanded(
+                    child: TextFieldContainer(
+                      controller: _systolicController,
+                      labelText: 'Systolic',
+                      hint: 'X/Y mmHg',
+                      keyboardType: TextInputType.number,
+                      onSaved: (value) {
+                        _provider.test.readings?.systolicBP =
+                            int.parse(value ?? '0');
+                      },
+                      validation: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter systolic value';
+                        } else {
+                          return null;
+                        }
+                      },
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 12,
+                  ),
+                  Expanded(
+                    child: TextFieldContainer(
+                      controller: _diastolicController,
+                      labelText: 'Diastolic',
+                      hint: 'X/Y mmHg',
+                      keyboardType: TextInputType.number,
+                      onSaved: (value) {
+                        _provider.test.readings?.diastolicBP =
+                            int.parse(value ?? '0');
+                      },
+                      validation: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter diastolic value';
+                        } else {
+                          return null;
+                        }
+                      },
+                    ),
+                  )
                 ],
               ),
               const SizedBox(height: 20),
 
               // First Name TextField
               TextFieldContainer(
-                controller: _departmentController,
+                controller: _rasRateController,
                 labelText: 'Respiratory Rate',
                 hint: 'X/min',
+                keyboardType: TextInputType.number,
                 onSaved: (value) {
-                  //name = value;
+                  _provider.test.readings?.respiratoryRate =
+                      int.parse(value ?? '0');
                 },
                 validation: (value) {
                   if (value == null || value.isEmpty) {
@@ -208,11 +247,13 @@ class _AddTestScreenState extends State<AddTestScreen> {
 
               // Last Name TextField
               TextFieldContainer(
-                controller: _doctorController,
+                controller: _bloodOxyLevelController,
                 labelText: 'Blood Oxygen Level',
                 hint: 'X%',
+                keyboardType: TextInputType.number,
                 onSaved: (value) {
-                  //name = value;
+                  _provider.test.readings?.bloodOxygenLevel =
+                      int.parse(value ?? '0');
                 },
                 validation: (value) {
                   if (value == null || value.isEmpty) {
@@ -225,11 +266,12 @@ class _AddTestScreenState extends State<AddTestScreen> {
               const SizedBox(height: 20),
 
               TextFieldContainer(
-                controller: _departmentController,
+                controller: _heartRateController,
                 labelText: 'Heartbeat Rate',
                 hint: 'X/min',
+                keyboardType: TextInputType.number,
                 onSaved: (value) {
-                  //name = value;
+                  _provider.test.readings?.heartRate = int.parse(value ?? '0');
                 },
                 validation: (value) {
                   if (value == null || value.isEmpty) {
@@ -240,12 +282,11 @@ class _AddTestScreenState extends State<AddTestScreen> {
                 },
               ),
 
-
               const SizedBox(height: 40),
 
               CustomElevatedButton(
                 buttonText: widget.isEdit ? 'Update Test' : 'Add Test',
-                onTap: () => _addTest(),
+                onTap: () => widget.isEdit ? _updateTest() : _addTest(),
               ),
             ],
           ),
@@ -265,28 +306,56 @@ class _AddTestScreenState extends State<AddTestScreen> {
         return;
       }
 
-      /*Map<String, dynamic> body = {
-        "fullName" : _nameController.text,
-        "contactNumber" : _contactController.text,
-        "dateOfBirth" : _dateController.text
-      };
-      String jsonBody = json.encode(body);
+      _provider.test.createdBy = 'Bansi';
+      String jsonBody = json.encode(_provider.test.toJson());
 
       DialogUtil.getInstance()?.showLoaderDialog();
       NetworkResponse response = await NetworkRepository.post(
-          '${GetIt.instance<AppConfig>().baseUrl}$kProfileApi/${widget.customer?.id}', body: jsonBody);
+          '${GetIt.instance<AppConfig>().baseUrl}$kGetPatient/${widget.patientID}$kGetPatientTests',
+          body: jsonBody);
       DialogUtil.getInstance()?.dismissLoaderDialog();
 
       if (response.success && response.response != null) {
         if (!context.mounted) return;
-        Util.showMsg(context, kProfileUpdateSuccessMsg);
+        Util.showMsg(context, kPatientTestAddedSuccessMsg);
 
         Navigator.pop(context, true);
-      }else {
+      } else {
         if (!context.mounted) return;
-        Util.showMsg(context, 'Invalid username or password');
-        //Util.showMsg(context, response.errorMsg ?? kSomethingWentWrongMsg);
-      }*/
+        Util.showMsg(context, response.errorMsg ?? kSomethingWentWrongMsg);
+      }
+    }
+  }
+
+  _updateTest() async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState?.save();
+
+      bool isOnline = await InternetConnectionChecker().hasConnection;
+      if (!isOnline) {
+        if (!context.mounted) return;
+        Util.showMsg(context, kNoInternetMsg);
+        return;
+      }
+
+      _provider.test.modifiedBy = 'Bansi';
+      String jsonBody = json.encode(_provider.test.toJson());
+
+      DialogUtil.getInstance()?.showLoaderDialog();
+      NetworkResponse response = await NetworkRepository.put(
+          '${GetIt.instance<AppConfig>().baseUrl}$kGetPatient/${widget.patientID}$kGetPatientTests/${widget.test?.sId}',
+          body: jsonBody);
+      DialogUtil.getInstance()?.dismissLoaderDialog();
+
+      if (response.success && response.response != null) {
+        if (!context.mounted) return;
+        Util.showMsg(context, kPatientTestUpdatedSuccessMsg);
+
+        Navigator.pop(context, true);
+      } else {
+        if (!context.mounted) return;
+        Util.showMsg(context, response.errorMsg ?? kSomethingWentWrongMsg);
+      }
     }
   }
 }

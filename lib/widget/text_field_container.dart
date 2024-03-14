@@ -13,6 +13,7 @@ class TextFieldContainer extends StatelessWidget {
   final Function()? onTap;
   final int maxLines;
   final String? hint;
+  final TextInputType? keyboardType;
 
   const TextFieldContainer(
       {super.key,
@@ -26,7 +27,8 @@ class TextFieldContainer extends StatelessWidget {
         this.suffixIconData,
         this.suffixIconColor,
       this.maxLines = 1,
-      this.hint});
+      this.hint,
+      this.keyboardType});
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +50,7 @@ class TextFieldContainer extends StatelessWidget {
           suffixIconData: suffixIconData,
           maxLines: maxLines,
           hint: hint,
+          keyboardType: keyboardType,
         )
       ],
     );

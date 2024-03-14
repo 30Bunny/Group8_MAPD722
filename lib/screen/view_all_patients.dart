@@ -53,8 +53,8 @@ class _ViewAllPatientsState extends State<ViewAllPatients> {
           builder: (context, child) {
             return Consumer<PatientProvider>(
                 builder: (context, provider, child) {
-                  return _getBody;
-                });
+              return _getBody;
+            });
           },
         ));
   }
@@ -64,8 +64,8 @@ class _ViewAllPatientsState extends State<ViewAllPatients> {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.only(
-                top: 12, bottom: 4, left: 12, right: 12),
+            padding:
+                const EdgeInsets.only(top: 12, bottom: 4, left: 12, right: 12),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -99,7 +99,6 @@ class _ViewAllPatientsState extends State<ViewAllPatients> {
                     ),
                   ),
                 ),
-
                 Flexible(
                   child: DropdownButtonFormField(
                       isExpanded: true,
@@ -109,7 +108,8 @@ class _ViewAllPatientsState extends State<ViewAllPatients> {
                           .bodyMedium
                           ?.copyWith(height: 1.0),
                       decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.fromLTRB(12, 20, 12, 12),
+                        contentPadding:
+                            const EdgeInsets.fromLTRB(12, 20, 12, 12),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -139,64 +139,74 @@ class _ViewAllPatientsState extends State<ViewAllPatients> {
             ),
           ),
 
+          if (_provider.patients.isEmpty)
+            const Center(child: Text('No data found')),
 
           // Patient List
-          ListView.separated(
-            shrinkWrap: true,
-            scrollDirection: Axis.vertical,
-            itemCount: _provider.patients.length,
-            padding: const EdgeInsets.all(16),
-            physics: const NeverScrollableScrollPhysics(),
-            itemBuilder: (ctx, index) {
-              return PatientCard(
-                patient: _provider.patients[index],
-                onTap: () => _navigateToPatientProfile(),
-                onViewTests: () => _navigateToViewTests(),
-                onDelete: () => _showDeleteAlert(index),
-                onUpdate: () => _navigateToEditPatient(),
-              );
-            },
-            separatorBuilder: (context, index) {
-              return const SizedBox(height: 16);
-            },
-          )
+          if (_provider.patients.isNotEmpty)
+            ListView.separated(
+              shrinkWrap: true,
+              scrollDirection: Axis.vertical,
+              itemCount: _provider.patients.length,
+              padding: const EdgeInsets.all(16),
+              physics: const NeverScrollableScrollPhysics(),
+              itemBuilder: (ctx, index) {
+                return PatientCard(
+                  patient: _provider.patients[index],
+                  onTap: () =>
+                      _navigateToPatientProfile(_provider.patients[index].sId),
+                  onViewTests: () =>
+                      _navigateToViewTests(_provider.patients[index].sId),
+                  onDelete: () => _showDeleteAlert(index),
+                  onUpdate: () => _navigateToEditPatient(index),
+                );
+              },
+              separatorBuilder: (context, index) {
+                return const SizedBox(height: 16);
+              },
+            )
         ],
       ),
     );
   }
 
-  _navigateToPatientProfile(){
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const  PatientProfileScreen()));
+  _navigateToPatientProfile(String? sId) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => PatientProfileScreen(
+                  patientID: sId ?? '',
+                )));
   }
 
-  _navigateToViewTests(){
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const  PatientTestScreen()));
+  _navigateToViewTests(String? sId) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => PatientTestScreen(
+                  patientID: sId,
+                )));
   }
 
-  _navigateToEditPatient(){
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const  AddNewPatient(isEdit: true,)));
+  _navigateToEditPatient(int index) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => AddNewPatient(
+                  isEdit: true,
+                  patient: _provider.patients[index],
+                )));
   }
 
-  _showDeleteAllAlert(){
-    DialogUtil.getInstance()?.showAlertDialog(context, 'Are you sure you want to delete all records?',title: 'Delete All', onButtonTap: () => _onDeleteAll());
+  _showDeleteAllAlert() {
+    DialogUtil.getInstance()?.showAlertDialog(
+        context, 'Are you sure you want to delete all records?',
+        title: 'Delete All', onButtonTap: () => _onDeleteAll());
   }
 
-  _onDeleteAll(){
+  _onDeleteAll() async {
     Navigator.pop(context);
-    //Todo
-  }
 
-  _showDeleteAlert(int index){
-    DialogUtil.getInstance()?.showAlertDialog(context, 'Are you sure you want to delete records?',title: 'Delete', onButtonTap: () => _onDelete(index));
-  }
-
-  _onDelete(int index){
-    Navigator.pop(context);
-    //Todo
-  }
-
-  // Fetch Patient data from API and update the state variables
-  void _fetchPatient() async{
     bool isOnline = await InternetConnectionChecker().hasConnection;
     if (!isOnline) {
       if (!context.mounted) return;
@@ -204,6 +214,56 @@ class _ViewAllPatientsState extends State<ViewAllPatients> {
       return;
     }
 
+    DialogUtil.getInstance()?.showLoaderDialog();
+    NetworkResponse response = await NetworkRepository.delete(
+        '${GetIt.instance<AppConfig>().baseUrl}$kGetPatient');
+    DialogUtil.getInstance()?.dismissLoaderDialog();
+    if (response.success && response.response != null) {
+      try {
+        _provider.clearPatient();
+      } catch (e) {
+        print(e.toString());
+      }
+    }
+  }
+
+  _showDeleteAlert(int index) {
+    DialogUtil.getInstance()?.showAlertDialog(
+        context, 'Are you sure you want to delete records?',
+        title: 'Delete', onButtonTap: () => _onDelete(index));
+  }
+
+  _onDelete(int index) async {
+    Navigator.pop(context);
+
+    bool isOnline = await InternetConnectionChecker().hasConnection;
+    if (!isOnline) {
+      if (!context.mounted) return;
+      Util.showMsg(context, kNoInternetMsg);
+      return;
+    }
+
+    DialogUtil.getInstance()?.showLoaderDialog();
+    NetworkResponse response = await NetworkRepository.delete(
+        '${GetIt.instance<AppConfig>().baseUrl}$kGetPatient/${_provider.patients[index].sId}');
+    DialogUtil.getInstance()?.dismissLoaderDialog();
+    if (response.success && response.response != null) {
+      try {
+        _provider.removePatientAtIndex(index);
+      } catch (e) {
+        print(e.toString());
+      }
+    }
+  }
+
+  // Fetch Patient data from API and update the state variables
+  void _fetchPatient() async {
+    bool isOnline = await InternetConnectionChecker().hasConnection;
+    if (!isOnline) {
+      if (!context.mounted) return;
+      Util.showMsg(context, kNoInternetMsg);
+      return;
+    }
 
     DialogUtil.getInstance()?.showLoaderDialog();
     NetworkResponse response = await NetworkRepository.get(
@@ -212,8 +272,10 @@ class _ViewAllPatientsState extends State<ViewAllPatients> {
     if (response.success && response.response != null) {
       try {
         var parsedJson = json.decode(response.response!);
-        _provider.setPatientList(List<Patient>.from(parsedJson.map((model)=> Patient.fromJson(model))).reversed.toList());
-
+        _provider.setPatientList(List<Patient>.from(
+                parsedJson.map((model) => Patient.fromJson(model)))
+            .reversed
+            .toList());
       } catch (e) {
         print(e.toString());
       }

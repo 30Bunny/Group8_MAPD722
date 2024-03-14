@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:group8_mapd722/constant.dart';
 
 class CustomTextField extends StatelessWidget {
   final String labelText;
@@ -13,6 +12,7 @@ class CustomTextField extends StatelessWidget {
   final Function()? onTap;
   final int maxLines;
   final String? hint;
+  final TextInputType? keyboardType;
 
   const CustomTextField(
       {super.key,
@@ -26,13 +26,15 @@ class CustomTextField extends StatelessWidget {
       this.suffixIconData,
       this.suffixIconColor,
       this.maxLines = 1,
-      this.hint});
+      this.hint,
+      this.keyboardType});
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
       style: Theme.of(context).textTheme.bodyLarge?.copyWith(height: 1.0),
+      keyboardType: keyboardType,
       decoration: InputDecoration(
           hintText: hint ?? labelText,
           hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.0, color: Colors.grey),

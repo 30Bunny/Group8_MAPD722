@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:group8_mapd722/constant.dart';
+import 'package:group8_mapd722/model/test.dart';
+import 'package:group8_mapd722/util/util.dart';
+import 'package:intl/intl.dart';
 
 class TestCard extends StatelessWidget {
+  final Test test;
   final Function()? onDelete;
   final Function()? onUpdate;
 
-  const TestCard({super.key, this.onDelete, this.onUpdate});
+  const TestCard({super.key,required this.test, this.onDelete, this.onUpdate});
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +34,7 @@ class TestCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Image.asset(
-                  kPositiveIcon,
+                  test.testStatus == kCategoryList[1] ? kPositiveIcon : kCriticalIcon,
                   width: 20,
                   height: 20,
                 ),
@@ -45,7 +49,8 @@ class TestCard extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   child: Text(
-                    'Feb 28 2024',
+                    test.testDate ?? "",
+                    //'Feb 28 2024',
                     style: Theme.of(context)
                         .textTheme
                         .bodySmall
@@ -67,7 +72,7 @@ class TestCard extends StatelessWidget {
                       fontWeight: FontWeight.w400,
                       fontSize: 13),
                 ),
-                Text("Kou Tanaka",
+                Text(test.nurseName ?? '',
                     style: Theme.of(context).textTheme.bodyMedium),
               ],
             ),
@@ -82,7 +87,7 @@ class TestCard extends StatelessWidget {
                       fontWeight: FontWeight.w400,
                       fontSize: 13),
                 ),
-                Text("60", style: Theme.of(context).textTheme.bodyMedium),
+                Text(test.readings?.systolicBP?.toString() ?? "", style: Theme.of(context).textTheme.bodyMedium),
               ],
             ),
             const SizedBox(height: 4),
@@ -96,7 +101,7 @@ class TestCard extends StatelessWidget {
                       fontWeight: FontWeight.w400,
                       fontSize: 13),
                 ),
-                Text("40", style: Theme.of(context).textTheme.bodyMedium),
+                Text(test.readings?.diastolicBP?.toString() ?? "", style: Theme.of(context).textTheme.bodyMedium),
               ],
             ),
             const SizedBox(height: 4),
@@ -110,7 +115,7 @@ class TestCard extends StatelessWidget {
                       fontWeight: FontWeight.w400,
                       fontSize: 13),
                 ),
-                Text("6/min", style: Theme.of(context).textTheme.bodyMedium),
+                Text("${test.readings?.respiratoryRate?.toString() ?? ""}/min", style: Theme.of(context).textTheme.bodyMedium),
               ],
             ),
             const SizedBox(height: 4),
@@ -124,7 +129,7 @@ class TestCard extends StatelessWidget {
                       fontWeight: FontWeight.w400,
                       fontSize: 13),
                 ),
-                Text("70%", style: Theme.of(context).textTheme.bodyMedium),
+                Text("${test.readings?.bloodOxygenLevel?.toString() ?? ""}%", style: Theme.of(context).textTheme.bodyMedium),
               ],
             ),
             const SizedBox(height: 4),
@@ -138,7 +143,7 @@ class TestCard extends StatelessWidget {
                       fontWeight: FontWeight.w400,
                       fontSize: 13),
                 ),
-                Text("40/min", style: Theme.of(context).textTheme.bodyMedium),
+                Text("${test.readings?.heartRate?.toString() ?? ""}/min", style: Theme.of(context).textTheme.bodyMedium),
               ],
             ),
             const SizedBox(
@@ -151,12 +156,12 @@ class TestCard extends StatelessWidget {
                     direction: Axis.vertical,
                     children: [
                       Text(
-                        "Created By : Bansi",
+                        "Created By : ${test.createdBy}",
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: Colors.grey[600],
                             fontWeight: FontWeight.w400),
                       ),
-                      Text("Created On : 2024-02-27",
+                      Text("Created On : ${test.createdOn}",
                           style: Theme.of(context)
                               .textTheme
                               .bodySmall
