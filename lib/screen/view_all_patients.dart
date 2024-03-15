@@ -179,23 +179,30 @@ class _ViewAllPatientsState extends State<ViewAllPatients> {
                 )));
   }
 
-  _navigateToViewTests(String? sId) {
-    Navigator.push(
+  _navigateToViewTests(String? sId) async{
+    final refresh = await Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => PatientTestScreen(
                   patientID: sId,
                 )));
+    if(refresh != null && refresh){
+      _fetchPatient();
+    }
   }
 
-  _navigateToEditPatient(int index) {
-    Navigator.push(
+  _navigateToEditPatient(int index) async{
+    final refresh = await Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => AddNewPatient(
                   isEdit: true,
                   patient: _provider.patients[index],
                 )));
+
+    if(refresh != null && refresh){
+      _fetchPatient();
+    }
   }
 
   _showDeleteAllAlert() {

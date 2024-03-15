@@ -338,7 +338,10 @@ class _AddTestScreenState extends State<AddTestScreen> {
         return;
       }
 
+      _provider.test.sId = widget.test?.sId;
       _provider.test.modifiedBy = 'Bansi';
+      _provider.test.createdBy = 'Bansi';
+
       String jsonBody = json.encode(_provider.test.toJson());
 
       DialogUtil.getInstance()?.showLoaderDialog();
@@ -346,7 +349,7 @@ class _AddTestScreenState extends State<AddTestScreen> {
           '${GetIt.instance<AppConfig>().baseUrl}$kGetPatient/${widget.patientID}$kGetPatientTests/${widget.test?.sId}',
           body: jsonBody);
       DialogUtil.getInstance()?.dismissLoaderDialog();
-
+      print(response.errorMsg);
       if (response.success && response.response != null) {
         if (!context.mounted) return;
         Util.showMsg(context, kPatientTestUpdatedSuccessMsg);

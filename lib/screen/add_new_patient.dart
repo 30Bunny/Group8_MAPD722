@@ -75,6 +75,7 @@ class _AddNewPatientState extends State<AddNewPatient> {
   }
 
   _setData(){
+    _provider.patient = widget.patient ?? Patient();
     if(widget.isEdit){
       _fNameController.text = widget.patient?.firstName ?? '';
       _lNameController.text = widget.patient?.lastName ?? '';
@@ -386,6 +387,7 @@ class _AddNewPatientState extends State<AddNewPatient> {
 
       _provider.patient.gender = kGenderList[_provider.genderValue];
       _provider.patient.modifiedBy = 'Bansi';
+      _provider.patient.createdBy = 'Bansi';
 
       bool isOnline = await InternetConnectionChecker().hasConnection;
       if (!isOnline) {
@@ -405,7 +407,7 @@ class _AddNewPatientState extends State<AddNewPatient> {
         if (!context.mounted) return;
         Util.showMsg(context, kPatientUpdatedSuccessMsg);
 
-        Navigator.pop(context);
+        Navigator.pop(context, true);
       }else {
         if (!context.mounted) return;
         Util.showMsg(context, kSomethingWentWrongMsg);
