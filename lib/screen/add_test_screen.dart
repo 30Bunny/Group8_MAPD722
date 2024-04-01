@@ -341,6 +341,7 @@ class _AddTestScreenState extends State<AddTestScreen> {
       _provider.test.sId = widget.test?.sId;
       _provider.test.modifiedBy = 'Bansi';
       _provider.test.createdBy = 'Bansi';
+      _provider.test.createdOn = widget.test?.createdOn;
 
       String jsonBody = json.encode(_provider.test.toJson());
 

@@ -28,8 +28,7 @@ class ViewAllPatients extends StatefulWidget {
 class _ViewAllPatientsState extends State<ViewAllPatients> {
   final PatientProvider _provider = PatientProvider();
   final TextEditingController _controller = TextEditingController();
-  String _searchText = '';
-  String categoryValue = kCategoryList[0];
+  //String _searchText = '';
 
   @override
   void initState() {
@@ -79,11 +78,8 @@ class _ViewAllPatientsState extends State<ViewAllPatients> {
                           .bodyMedium
                           ?.copyWith(height: 1.0),
                       controller: _controller,
-                      onChanged: (value) {
-                        setState(() {
-                          _searchText = value;
-                        });
-                      },
+                      onChanged: (value) => 
+                      _provider.search(value),
                       decoration: InputDecoration(
                         hintText: 'Search...',
                         focusedBorder: OutlineInputBorder(
@@ -102,7 +98,7 @@ class _ViewAllPatientsState extends State<ViewAllPatients> {
                 Flexible(
                   child: DropdownButtonFormField(
                       isExpanded: true,
-                      value: categoryValue,
+                      value: _provider.categoryValue,
                       style: Theme.of(context)
                           .textTheme
                           .bodyMedium
@@ -129,11 +125,7 @@ class _ViewAllPatientsState extends State<ViewAllPatients> {
                           child: Text(value),
                         );
                       }).toList(),
-                      onChanged: (val) {
-                        setState(() {
-                          categoryValue = val.toString();
-                        });
-                      }),
+                      onChanged: (val) => _provider.changeCategory(val)),
                 ),
               ],
             ),
@@ -179,16 +171,13 @@ class _ViewAllPatientsState extends State<ViewAllPatients> {
                 )));
   }
 
-  _navigateToViewTests(String? sId) async{
-    final refresh = await Navigator.push(
+  _navigateToViewTests(String? sId){
+    Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => PatientTestScreen(
                   patientID: sId,
-                )));
-    if(refresh != null && refresh){
-      _fetchPatient();
-    }
+                ))).then((value) => _fetchPatient());
   }
 
   _navigateToEditPatient(int index) async{

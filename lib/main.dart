@@ -10,7 +10,7 @@ void main() async{
   DialogUtil.getInstance()?.configLoading();
 
   // load our config
-  final config = await AppConfig.forEnvironment(Environment.dev);
+  final config = await AppConfig.forEnvironment(Environment.prod);
   setupLocator(config);
 
   runApp(const MyApp());
