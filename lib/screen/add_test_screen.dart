@@ -193,6 +193,8 @@ class _AddTestScreenState extends State<AddTestScreen> {
                       validation: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter systolic value';
+                        } else if ((int.tryParse(value) ?? 0) <= 0) {
+                          return 'Please enter valid systolic value';
                         } else {
                           return null;
                         }
@@ -215,6 +217,8 @@ class _AddTestScreenState extends State<AddTestScreen> {
                       validation: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter diastolic value';
+                        } else if ((int.tryParse(value) ?? 0) <= 0) {
+                          return 'Please enter valid diastolic value';
                         } else {
                           return null;
                         }
@@ -238,6 +242,8 @@ class _AddTestScreenState extends State<AddTestScreen> {
                 validation: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter Respiratory rate';
+                  } else if ((int.tryParse(value) ?? 0) <= 0) {
+                    return 'Please enter valid Respiratory rate';
                   } else {
                     return null;
                   }
@@ -258,6 +264,8 @@ class _AddTestScreenState extends State<AddTestScreen> {
                 validation: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter Blood oxygen Level';
+                  } else if ((int.tryParse(value) ?? 0) <= 0) {
+                    return 'Please enter valid Blood oxygen Level';
                   } else {
                     return null;
                   }
@@ -276,6 +284,8 @@ class _AddTestScreenState extends State<AddTestScreen> {
                 validation: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter Heartbeat rate';
+                  } else if ((int.tryParse(value) ?? 0) <= 0) {
+                    return 'Please enter valid Heartbeat rate';
                   } else {
                     return null;
                   }
